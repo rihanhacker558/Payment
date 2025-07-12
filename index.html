@@ -1,857 +1,98 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Payment Options</title>
-    <style>
-        /* Reset and base styles */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
-        }
-
-        /* Theme Variables */
-        :root {
-            --bg-color: #f8f9fa;
-            --text-color: #333;
-            --card-bg: #fff;
-            --border-color: #eee;
-            --overlay-opacity: 0;
-        }
-
-        [data-theme="dark"] {
-            --bg-color: #1a1a1a;
-            --text-color: #fff;
-            --card-bg: #2d2d2d;
-            --border-color: #404040;
-            --overlay-opacity: 0.7;
-        }
-
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            line-height: 1.6;
-            transition: background-color 0.3s ease, color 0.3s ease;
-        }
-
-        /* Theme Toggle Button */
-        .theme-toggle {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 1000;
-            background: #fff;
-            border: none;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-
-        .theme-toggle:hover {
-            transform: scale(1.1);
-        }
-
-        .theme-toggle svg {
-            width: 20px;
-            height: 20px;
-            color: var(--text-color);
-        }
-
-        .dark-mode {
-            background-color: #1a1a1a;
-            color: #fff;
-        }
-
-        .dark-mode .hero-overlay {
-            background-color: rgba(0, 0, 0, 0.7);
-        }
-
-        .dark-mode .payment-section {
-            background-color: #2d2d2d;
-        }
-
-        .dark-mode .payment-table {
-            background-color: #2d2d2d;
-        }
-
-        .dark-mode .payment-row {
-            border-bottom-color: #404040;
-        }
-
-        .dark-mode .warning-message {
-            background-color: #333;
-            color: #fff;
-        }
-
-        .dark-mode .payment-name {
-            color: #fff;
-        }
-
-        .dark-mode .payment-number {
-            color: #e0e0e0;
-        }
-
-        .dark-mode .section-title h2 {
-            color: #fff;
-        }
-
-        .dark-mode .section-title h2::after {
-            background: linear-gradient(to right, #a78bfa, #60a5fa);
-        }
-
-        .dark-mode .hero-text h1 {
-            background: linear-gradient(to right, #a78bfa, #60a5fa);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-
-        .dark-mode .hero-text p {
-            color: #d1d5db;
-        }
-
-        .dark-mode .hero-text .typed-text {
-            background: linear-gradient(to right, #a78bfa, #60a5fa);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-
-        .dark-mode .hero-text .static-text {
-            color: #d1d5db;
-        }
-
-        .dark-mode .qris-image {
-            background-color: #333;
-            border-color: #404040;
-        }
-
-        .dark-mode .theme-toggle {
-            background-color: #2d2d2d;
-            color: #fff;
-        }
-
-        .dark-mode .theme-toggle svg {
-            color: #fff;
-        }
-
-        .dark-mode .payment-row:hover {
-            background-color: #333;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-        }
-
-        .dark-mode .payment-row {
-            border-bottom-color: #404040;
-            transition: all 0.3s ease;
-        }
-
-        .dark-mode .payment-row:hover .payment-name {
-            color: #a78bfa;
-        }
-
-        .dark-mode .payment-row:hover .payment-number {
-            color: #60a5fa;
-        }
-
-        /* Hero Section */
-        .hero {
-            position: relative;
-            height: 70vh;
-            width: 100%;
-            overflow: hidden;
-        }
-
-        .hero-video {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            opacity: 1;
-        }
-
-        .hero-overlay {
-            position: absolute;
-            inset: 0;
-            background-color: rgba(0, 0, 0, var(--overlay-opacity));
-            transition: background-color 0.3s ease;
-        }
-
-        .hero-content {
-            position: relative;
-            z-index: 10;
-            max-width: 80rem;
-            margin: 0 auto;
-            padding: 4rem 1rem;
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 70vh;
-        }
-
-        .logo {
-            width: 120px;
-            height: 120px;
-            margin: 0 auto 2rem;
-            border-radius: 9999px;
-            overflow: hidden;
-            background: #fff;
-            padding: 0.5rem;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-        }
-
-        .logo img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-        }
-
-        .hero-text h1 {
-            font-size: 3.5rem;
-            font-weight: 700;
-            background: linear-gradient(to right, #a78bfa, #60a5fa);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            margin-bottom: 1rem;
-            line-height: 1.2;
-        }
-
-        .hero-text p {
-            font-size: 1.5rem;
-            color: #d1d5db;
-            margin-bottom: 2rem;
-            line-height: 1.4;
-        }
-
-        .hero-text .typed-text {
-            background: linear-gradient(to right, #a78bfa, #60a5fa);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            font-weight: 600;
-            font-size: 1.5rem;
-        }
-
-        .hero-text .static-text {
-            color: #d1d5db;
-            font-size: 1.5rem;
-        }
-
-        .hero-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.5rem 1rem;
-            background-color: #2563eb;
-            color: white;
-            border-radius: 0.5rem;
-            font-size: 0.875rem;
-            transition: background-color 0.3s;
-            text-decoration: none;
-        }
-
-        .hero-btn:hover {
-            background-color: #1d4ed8;
-        }
-
-        /* Payment Section */
-        .payment-section {
-            padding: 2rem 1rem;
-            background-color: var(--card-bg);
-            margin-top: -5rem;
-            position: relative;
-            z-index: 20;
-            border-radius: 1rem 1rem 0 0;
-            transition: background-color 0.3s ease;
-        }
-
-        .section-title {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-
-        .section-title h2 {
-            font-size: 2rem;
-            color: #333;
-            position: relative;
-            display: inline-block;
-            padding-bottom: 0.75rem;
-        }
-
-        .section-title h2::after {
-            content: '';
-            position: absolute;
-            width: 40%;
-            height: 3px;
-            background: linear-gradient(to right, #6a11cb, #2575fc);
-            bottom: 0;
-            left: 30%;
-            border-radius: 2px;
-        }
-
-        .payment-table {
-            max-width: 600px;
-            margin: 0 auto;
-            background: var(--card-bg);
-            border-radius: 12px;
-            overflow: hidden;
-            transition: background-color 0.3s ease;
-        }
-
-        .payment-row {
-            display: flex;
-            align-items: center;
-            padding: 1rem;
-            border-bottom: 1px solid var(--border-color);
-            transition: background-color 0.3s ease;
-        }
-
-        .payment-row:last-child {
-            border-bottom: none;
-        }
-
-        .payment-row:hover {
-            background-color: #f8f9fa;
-        }
-
-        .payment-logo {
-            width: 40px;
-            height: 40px;
-            margin-right: 1rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .payment-logo img {
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain;
-        }
-
-        .payment-info {
-            flex: 1;
-        }
-
-        .payment-name {
-            font-weight: 600;
-            color: var(--text-color);
-            margin-bottom: 0.25rem;
-        }
-
-        .payment-number {
-            color: var(--text-color);
-            opacity: 0.8;
-            font-size: 0.9rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .copy-btn {
-            background: none;
-            border: none;
-            color: #6a11cb;
-            cursor: pointer;
-            padding: 0.25rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: color 0.3s ease;
-        }
-
-        .copy-btn:hover {
-            color: #2575fc;
-        }
-
-        .copy-btn svg {
-            width: 16px;
-            height: 16px;
-        }
-
-        .copy-tooltip {
-            position: absolute;
-            background: #333;
-            color: white;
-            padding: 0.5rem;
-            border-radius: 4px;
-            font-size: 0.8rem;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            pointer-events: none;
-        }
-
-        .copy-btn:hover .copy-tooltip {
-            opacity: 1;
-        }
-
-        .qris-image {
-            width: 200px;
-            height: 200px;
-            margin: 1rem auto;
-            padding: 1rem;
-            background: #fff;
-            border: 1px solid #eee;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            cursor: pointer;
-            transition: transform 0.3s ease;
-        }
-
-        .qris-image:hover {
-            transform: scale(1.05);
-        }
-
-        .qris-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-        }
-
-        .payment-row.qris-row {
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            padding: 1.5rem;
-        }
-
-        .payment-row.qris-row .payment-logo {
-            margin-bottom: 1rem;
-        }
-
-        .payment-row.qris-row .payment-info {
-            width: 100%;
-        }
-
-        .payment-row.qris-row .payment-name {
-            margin-bottom: 1rem;
-            font-size: 1.1rem;
-        }
-
-        .warning-message {
-            text-align: center;
-            color: var(--text-color);
-            font-size: 0.9rem;
-            margin: 1.5rem 0;
-            padding: 1rem;
-            background: var(--card-bg);
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-        }
-
-        .submit-btn {
-            display: block;
-            width: 200px;
-            margin: 1.5rem auto;
-            padding: 0.75rem 1.5rem;
-            background: linear-gradient(to right, #6a11cb, #2575fc);
-            color: #fff;
-            border: none;
-            border-radius: 25px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.3s ease;
-        }
-
-        .submit-btn:hover {
-            transform: scale(1.05);
-        }
-
-        /* Modal Styles */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1001;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.8);
-        }
-
-        .modal-content {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: var(--card-bg);
-            border-radius: 20px;
-            padding: 30px;
-            max-width: 90%;
-            max-height: 90%;
-            text-align: center;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.3);
-        }
-
-        .modal-qris {
-            width: 350px;
-            height: 350px;
-            margin: 20px auto;
-            border-radius: 15px;
-            overflow: hidden;
-            background: #fff;
-            padding: 10px;
-        }
-
-        .modal-qris img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-        }
-
-        .close-btn {
-            position: absolute;
-            top: 15px;
-            right: 20px;
-            font-size: 24px;
-            font-weight: bold;
-            color: #999;
-            cursor: pointer;
-            transition: color 0.3s ease;
-        }
-
-        .close-btn:hover {
-            color: #333;
-        }
-
-        .modal h3 {
-            color: var(--text-color);
-            margin-bottom: 10px;
-            font-size: 20px;
-        }
-
-        .modal p {
-            color: var(--text-color);
-            margin-bottom: 20px;
-            opacity: 0.8;
-        }
-
-        /* Footer */
-        footer {
-            background-color: #333;
-            color: #fff;
-            text-align: center;
-            padding: 2rem;
-        }
-
-        /* Responsive adjustments */
-        @media (max-width: 768px) {
-            .hero {
-                height: 60vh;
-            }
-
-            .payment-section {
-                margin-top: -3rem;
-                padding: 1.5rem 1rem;
-            }
-
-            .section-title h2 {
-                font-size: 1.75rem;
-            }
-
-            .payment-options {
-                grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-                gap: 1rem;
-            }
-
-            .hero-content {
-                padding: 3rem 1rem;
-            }
-
-            .logo {
-                width: 100px;
-                height: 100px;
-                margin-bottom: 1.5rem;
-            }
-
-            .hero-text h1 {
-                font-size: 2.5rem;
-            }
-
-            .hero-text p {
-                font-size: 1.25rem;
-            }
-
-            .hero-text .typed-text,
-            .hero-text .static-text {
-                font-size: 1.25rem;
-            }
-
-            .modal-content {
-                margin: 20px;
-                padding: 20px;
-            }
-            
-            .modal-qris {
-                width: 280px;
-                height: 280px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .hero {
-                height: 50vh;
-            }
-
-            .payment-section {
-                margin-top: -2rem;
-            }
-
-            .payment-options {
-                grid-template-columns: 1fr;
-            }
-
-            .hero-content {
-                padding: 2rem 1rem;
-            }
-
-            .logo {
-                width: 80px;
-                height: 80px;
-                margin-bottom: 1rem;
-            }
-
-            .hero-text h1 {
-                font-size: 2rem;
-            }
-
-            .hero-text p {
-                font-size: 1.1rem;
-            }
-
-            .hero-text .typed-text,
-            .hero-text .static-text {
-                font-size: 1.1rem;
-            }
-        }
-    </style>
-</head>
-<body>
-    <!-- Theme Toggle Button -->
-    <button class="theme-toggle" onclick="toggleTheme()">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-        </svg>
-    </button>
-
-    <!-- Hero Section -->
-    <section class="hero" id="home">
-        <video class="hero-video" autoplay loop muted playsinline>
-            <source src="https://v1.pinimg.com/videos/iht/720p/1c/55/b0/1c55b0875dcb3d9a0ee051c8defa83da.mp4" type="video/mp4">
-        </video>
-        <div class="hero-overlay"></div>
-        <div class="hero-content">
-            <div class="logo">
-                <img src="https://files.catbox.moe/sie0wy.jpg" alt="Company Logo">
-            </div>
-            <div class="hero-text">
-                <h1>Code Fomo</h1>
-                <p>
-                    <span class="typed-text">Landing Page</span>
-                    <span class="static-text"> Aktif</span>
-                </p>
-                
-            </div>
-        </div>
-    </section>
-
-    <!-- Payment Section -->
-    <section class="payment-section" id="payment">
-        <div class="section-title">
-            <h2>Daftar Payment</h2>
-        </div>
-        <div class="payment-table">
-            <!-- Dana -->
-            <div class="payment-row">
-                <div class="payment-logo">
-                    <img src="https://i.pinimg.com/736x/13/db/af/13dbafbf849af404cf61e28de61f8f78.jpg" alt="Dana Logo">
-                </div>
-                <div class="payment-info">
-                    <div class="payment-name">DANA</div>
-                    <div class="payment-number">
-                        No: 085133801810
-                        <button class="copy-btn" onclick="copyNumber('085133801810')">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                            </svg>
-                            <span class="copy-tooltip">Copy Number</span>
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- GoPay -->
-            <div class="payment-row">
-                <div class="payment-logo">
-                    <img src="https://i.pinimg.com/736x/fe/ce/b2/feceb2ca508603b06c2f7ba18a5d018d.jpg" alt="GoPay Logo">
-                </div>
-                <div class="payment-info">
-                    <div class="payment-name">GOPAY</div>
-                    <div class="payment-number">
-                        No: 085133801810
-                        <button class="copy-btn" onclick="copyNumber('085133801810')">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                            </svg>
-                            <span class="copy-tooltip">Copy Number</span>
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- PayPal -->
-            <div class="payment-row">
-                <div class="payment-logo">
-                    <img src="https://i.pinimg.com/736x/7c/81/52/7c8152cb8959cd0155c5f8d6cc3c7cd6.jpg" alt="PayPal Logo">
-                </div>
-                <div class="payment-info">
-                    <div class="payment-name">PAYPAL</div>
-                    <div class="payment-number">
-                        No: 085133801810
-                        <button class="copy-btn" onclick="copyNumber('085133801810')">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                            </svg>
-                            <span class="copy-tooltip">Copy Number</span>
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- QRIS -->
-            <div class="payment-row qris-row">
-                <div class="payment-logo">
-                </div>
-                <div class="payment-info">
-                    <div class="payment-name">QRIS</div>
-                    <div class="qris-image" onclick="openQrisModal()">
-                        <img src="https://files.catbox.moe/4o7n55.jpg" alt="QRIS Code">
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="warning-message">
-            *Setelah melakukan pembayaran silahkan kirimkan bukti
-        </div>
-
-        <button class="submit-btn">Kirim</button>
-    </section>
-
-    <!-- QRIS Modal -->
-    <div id="qrisModal" class="modal">
-        <div class="modal-content">
-            <span class="close-btn" onclick="closeQrisModal()">&times;</span>
-            <h3>QRIS Payment</h3>
-            <p>Scan kode QR di bawah ini untuk melakukan pembayaran</p>
-            <div class="modal-qris">
-                <img src="https://files.catbox.moe/4o7n55.jpg" alt="QRIS Code">
-            </div>
-            <p style="font-size: 14px; margin-top: 15px;">
-                Setelah scan, lakukan pembayaran sesuai nominal yang diinginkan
-            </p>
-        </div>
-    </div>
-
-    <!-- Footer -->
-    <footer>
-        <p>&copy; 2025 Payment Solutions. Alfarezz.</p>
-    </footer>
-
-    <script>
-        // Copy number function
-        function copyNumber(number) {
-            navigator.clipboard.writeText(number).then(function() {
-                // Show success notification
-                const btn = event.target.closest('.copy-btn');
-                const tooltip = btn.querySelector('.copy-tooltip');
-                const originalText = tooltip.textContent;
-                tooltip.textContent = 'Copied!';
-                
-                setTimeout(() => {
-                    tooltip.textContent = originalText;
-                }, 2000);
-            }).catch(function() {
-                alert('Gagal menyalin nomor. Silahkan copy manual: ' + number);
-            });
-        }
-
-        // QRIS Modal functions
-        function openQrisModal() {
-            document.getElementById('qrisModal').style.display = 'block';
-            document.body.style.overflow = 'hidden';
-        }
-
-        function closeQrisModal() {
-            document.getElementById('qrisModal').style.display = 'none';
-            document.body.style.overflow = 'auto';
-        }
-
-        // Close modal when clicking outside
-        window.onclick = function(event) {
-            const modal = document.getElementById('qrisModal');
-            if (event.target === modal) {
-                closeQrisModal();
-            }
-        }
-
-        // Close modal with Escape key
-        document.addEventListener('keydown', function(event) {
-            if (event.key === 'Escape') {
-                closeQrisModal();
-            }
-        });
-
-        // Theme toggle function
-        function toggleTheme() {
-            document.body.classList.toggle('dark-mode');
-            
-            // Save theme preference
-            if (document.body.classList.contains('dark-mode')) {
-                localStorage.setItem('theme', 'dark');
-            } else {
-                localStorage.setItem('theme', 'light');
-            }
-        }
-
-        // Load saved theme
-        document.addEventListener('DOMContentLoaded', function() {
-            const savedTheme = localStorage.getItem('theme');
-            if (savedTheme === 'dark') {
-                document.body.classList.add('dark-mode');
-            }
-        });
-
-        // Typed.js initialization
-        document.addEventListener('DOMContentLoaded', function() {
-            const typedText = document.querySelector('.typed-text');
-            const strings = ['Qris', 'Dana', 'Gopay'];
-            let currentIndex = 0;
-            
-            function typeText() {
-                typedText.textContent = strings[currentIndex];
-                currentIndex = (currentIndex + 1) % strings.length;
-            }
-            
-            typeText();
-            setInterval(typeText, 2000);
-        });
-    </script>
-</body>
-</html>
+<!DOCTYPE html><html lang="id"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Payment Alfarezz</title><style>@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+                :root{--light-bg:#f0f2f5;--light-card:#fff;--light-text:#1c1e21;--light-text-secondary:#65676b;--light-primary:#007bff;--light-primary-glow:rgba(0,123,255,.4);--light-accent:#00c6fb;--light-success:#28a745;--dark-bg:#0d1b2a;--dark-card:#1b263b;--dark-text:#e0e1dd;--dark-text-secondary:#a8b2d1;--dark-primary:#4facfe;--dark-primary-glow:rgba(79,172,254,.5);--dark-accent:#00f2fe;--dark-success:#20c997;--shadow-color:rgba(0,0,0,.1)}
+                [data-theme=light]{--bg-color:var(--light-bg);--card-color:var(--light-card);--text-color:var(--light-text);--text-secondary-color:var(--light-text-secondary);--primary-color:var(--light-primary);--primary-glow-color:var(--light-primary-glow);--accent-color:var(--light-accent);--success-color:var(--light-success);--shadow-color:rgba(0,0,0,.1)}
+                [data-theme=dark]{--bg-color:var(--dark-bg);--card-color:var(--dark-card);--text-color:var(--dark-text);--text-secondary-color:var(--dark-text-secondary);--primary-color:var(--dark-primary);--primary-glow-color:var(--dark-primary-glow);--accent-color:var(--dark-accent);--success-color:var(--dark-success);--shadow-color:rgba(0,0,0,.4)}
+                *{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif}body{display:flex;justify-content:center;align-items:center;min-height:100vh;background-color:var(--bg-color);color:var(--text-color);transition:background-color .5s ease,color .5s ease;padding:20px}[data-theme=dark] body{background-image:linear-gradient(rgba(13,27,42,.85),rgba(13,27,42,.95)),url(https://files.catbox.moe/5iedde.jpg);background-size:cover;background-position:center center;background-attachment:fixed}
+                .theme-switcher{position:fixed;top:20px;right:20px;width:50px;height:26px;background:var(--card-color);border-radius:25px;cursor:pointer;padding:4px;box-shadow:0 2px 10px var(--shadow-color);border:1px solid var(--primary-color);z-index:100}
+                .theme-switcher-toggle{height:18px;width:18px;background:var(--primary-color);border-radius:50%;transition:transform .4s cubic-bezier(.68,-.55,.27,1.55)}[data-theme=dark] .theme-switcher-toggle{transform:translateX(24px)}
+                .payment-container{max-width:420px;width:100%;background:var(--card-color);border-radius:24px;padding:35px;box-shadow:0 10px 40px 0 var(--shadow-color);animation:glowing-border 6s ease-in-out infinite,fadeIn 1s ease-out;text-align:center;border:2px solid transparent;position:relative;overflow:hidden;backdrop-filter:blur(5px)}[data-theme=light] .payment-container{background:var(--card-color)}[data-theme=dark] .payment-container{background:rgba(27,38,59,.75)}
+                @keyframes glowing-border{0%{border-color:var(--primary-color);box-shadow:0 0 20px var(--primary-glow-color)}50%{border-color:var(--accent-color);box-shadow:0 0 30px var(--accent-color)}100%{border-color:var(--primary-color);box-shadow:0 0 20px var(--primary-glow-color)}}@keyframes fadeIn{from{opacity:0;transform:translateY(25px)}to{opacity:1;transform:translateY(0)}}
+                .header{margin-bottom:30px}.profile-pic{width:100px;height:100px;border-radius:50%;object-fit:cover;border:4px solid var(--primary-color);box-shadow:0 0 20px var(--primary-glow-color);margin-bottom:15px;transition:transform .4s cubic-bezier(.175,.885,.32,1.275)}.profile-pic:hover{transform:scale(1.08) rotate(6deg)}.header h1{font-size:2rem;font-weight:700;color:var(--text-color);letter-spacing:.5px}
+                .payment-methods{display:grid;grid-template-columns:repeat(auto-fit,minmax(90px,1fr));gap:15px;margin-bottom:30px}.payment-btn{background:transparent;border:2px solid var(--text-secondary-color);color:var(--text-secondary-color);border-radius:16px;cursor:pointer;font-size:.9rem;font-weight:600;transition:all .4s ease;transform:scale(1);padding:15px 10px;display:flex;flex-direction:column;align-items:center;gap:8px}.payment-btn svg{width:32px;height:32px;transition:all .3s ease;fill:currentColor}.payment-btn:hover{border-color:var(--primary-color);color:var(--primary-color);transform:translateY(-5px);box-shadow:0 6px 15px var(--primary-glow-color)}.payment-btn.active{background-image:linear-gradient(45deg,var(--primary-color) 0%,var(--accent-color) 100%);color:#fff;border-color:transparent;transform:scale(1.05) translateY(-5px);box-shadow:0 8px 25px var(--primary-glow-color)}.payment-btn.active svg{transform:scale(1.1)}
+                .payment-details{min-height:120px;margin-bottom:30px}.account-info{animation:reveal .6s cubic-bezier(.165,.84,.44,1);background-color:var(--bg-color);padding:20px;border-radius:12px;display:flex;flex-direction:column;align-items:center;gap:15px}@keyframes reveal{from{opacity:0;transform:translateY(20px) scale(.95)}to{opacity:1;transform:translateY(0) scale(1)}}
+                .details-header{font-size:1rem;font-weight:500;color:var(--text-secondary-color)}.account-number{font-size:1.5rem;font-weight:700;color:var(--primary-color);letter-spacing:1px;word-break:break-all}
+                .copy-btn{background-image:linear-gradient(45deg,var(--primary-color) 0%,var(--accent-color) 100%);color:#fff;border:none;padding:10px 20px;border-radius:8px;font-weight:600;cursor:pointer;transition:all .3s ease;display:flex;align-items:center;gap:8px;box-shadow:0 4px 15px var(--primary-glow-color)}.copy-btn:hover{transform:scale(1.05);box-shadow:0 6px 20px var(--primary-glow-color)}.copy-btn.copied{background:var(--success-color);box-shadow:0 4px 15px rgba(32,201,151,.4)}
+                .instructions{margin-bottom:30px;color:var(--text-secondary-color);font-size:.9rem;line-height:1.6}.instructions span{font-weight:600;color:var(--primary-color)}
+                .whatsapp-btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;background-color:#25d366;color:#fff;padding:12px 25px;border-radius:50px;text-decoration:none;font-weight:600;box-shadow:0 4px 15px rgba(37,211,102,.4);transition:all .3s cubic-bezier(.175,.885,.32,1.275)}.whatsapp-btn:hover{transform:translateY(-3px) scale(1.05);box-shadow:0 6px 20px rgba(37,211,102,.5)}
+                .qris-modal{position:fixed;top:0;left:0;width:100%;height:100%;background-color:rgba(0,0,0,.8);backdrop-filter:blur(8px);display:none;justify-content:center;align-items:center;z-index:1000;animation:fadeInModal .4s ease}@keyframes fadeInModal{from{opacity:0}to{opacity:1}}
+                .qris-modal-content{position:relative;padding:20px;background:var(--card-color);border-radius:15px;text-align:center;animation:zoomIn .4s cubic-bezier(.175,.885,.32,1.275);max-width:90%;max-height:90%}@keyframes zoomIn{from{transform:scale(.5);opacity:0}to{transform:scale(1);opacity:1}}
+                .qris-image{max-width:100%;max-height:60vh;border-radius:10px;margin-bottom:20px}.modal-buttons{display:flex;justify-content:center;gap:15px}.modal-btn{padding:10px 20px;border-radius:8px;border:none;font-weight:600;cursor:pointer;transition:all .3s ease;color:#fff;font-size:1rem;text-decoration:none}.download-btn{background-image:linear-gradient(45deg,var(--primary-color) 0%,var(--accent-color) 100%)}.close-btn{background-color:#dc3545}.modal-btn:hover{opacity:.9;transform:scale(1.05)}
+            </style></head><body data-theme="dark"><div class="theme-switcher" id="themeSwitcher"><div class="theme-switcher-toggle"></div></div><div class="payment-container"><div class="header"><img src="https://files.catbox.moe/sie0wy.jpg" alt="Profile Picture" class="profile-pic"><h1>Payment Alfarezz</h1></div><div class="payment-methods">
+                <button class="payment-btn" data-method="dana"><svg viewBox="0 0 24 24"><path d="M12.83,11.17C12.5,10.5,12,10,12,10C12,10,12,10,12,10C11.67,10,11.5,10.17,11.17,10.83C10.5,11.5,10,12,10,12C10,12,10,12,10,12C10,12.33,10.17,12.5,10.83,13.17C11.5,13.83,12,14,12,14C12,14,12,14,12,14C12.33,14,12.5,13.83,13.17,13.17C13.83,12.5,14,12,14,12C14,12,14,12,14,12C14,11.67,13.83,11.5,13.17,10.83M12,2C12.53,2 13,2.19 13.41,2.59L19.41,8.59C19.81,9 20,9.47 20,10V12C20,12.53 19.81,13 19.41,13.41L13.41,19.41C13,19.81 12.53,20 12,20H10C9.47,20 9,19.81 8.59,19.41L2.59,13.41C2.19,13 2,12.53 2,12V10C2,9.47 2.19,9 2.59,8.59L8.59,2.59C9,2.19 9.47,2 10,2H12M12,4H10L4,10V12L10,18H12L18,12V10L12,4Z"/></svg><span>DANA</span></button>
+                <button class="payment-btn" data-method="gopay"><svg viewBox="0 0 24 24"><path d="M16.12,15.36L12,12.93L7.88,15.36L8.91,10.61L5.09,7.24L9.94,6.73L12,2.27L14.06,6.73L18.91,7.24L15.09,10.61L16.12,15.36M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20Z"/></svg><span>GoPay</span></button>
+                <button class="payment-btn" data-method="qris"><svg viewBox="0 0 24 24"><path d="M4,4H10V10H4V4M20,4V10H14V4H20M14,14H20V20H14V14M4,14H10V20H4V14M12,2H2V12H12V2M2,12V22H12V12H2M12,12V22H22V12H12M12,2H22V12H12V2Z"/></svg><span>QRIS</span></button>
+            </div><div class="payment-details" id="paymentDetails"><div class="account-info" style="border-style:solid;border-color:transparent"><p>Pilih metode pembayaran di atas.</p></div></div><div class="instructions"><p>Setelah transfer, mohon kirimkan bukti pembayaran ke <span>Alfarezz</span> melalui WhatsApp.</p></div><a href="https://wa.me/6285133801810?text=Halo%20Alfarezz,%20saya%20ingin%20mengirimkan%20bukti%20pembayaran." target="_blank" class="whatsapp-btn"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path d="M13.601 2.326A7.85 7.85 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.9 7.9 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.9 7.9 0 0 0 13.6 2.326zM7.994 14.521a6.6 6.6 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.56 6.56 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592m3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.73.73 0 0 0-.529.247c-.182.198-.691.677-.691 1.654s.71 1.916.81 2.049c.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232z"/></svg>Hubungi WhatsApp</a></div><div class="qris-modal" id="qrisModal"><div class="qris-modal-content"><img src="https://files.catbox.moe/4o7n55.jpg" alt="QRIS Code" class="qris-image"><div class="modal-buttons"><a href="https://files.catbox.moe/4o7n55.jpg" download="QRIS_Payment.jpeg" class="modal-btn download-btn">Download</a><button class="modal-btn close-btn" id="closeQrisBtn">Close</button></div></div></div><script>
+                document.addEventListener("DOMContentLoaded",(()=>{
+                    const themeSwitcher=document.getElementById("themeSwitcher"),
+                          paymentBtns=document.querySelectorAll(".payment-btn"),
+                          paymentDetailsContainer=document.getElementById("paymentDetails"),
+                          savedTheme=localStorage.getItem("theme")||"dark";
+                    
+                    document.body.setAttribute("data-theme",savedTheme);
+                    
+                    themeSwitcher.addEventListener("click",()=>{
+                        const currentTheme=document.body.getAttribute("data-theme"),
+                              newTheme=currentTheme==="dark"?"light":"dark";
+                        document.body.setAttribute("data-theme",newTheme);
+                        localStorage.setItem("theme",newTheme);
+                    });
+                    
+                    const paymentData={
+                        nomor:"085133801810",
+                        qrisUrl:"https://files.catbox.moe/4o7n55.jpg"
+                    };
+                    
+                    const copyToClipboard=(text,button)=>{
+                        navigator.clipboard.writeText(text).then(()=>{
+                            const originalHTML=button.innerHTML;
+                            button.innerHTML='<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.01 1.05L7.88 12.01a.733.733 0 0 1-1.065.02L3.217 8.384a.757.757 0 0 1 0-1.06.733.733 0 0 1 1.047 0l3.052 3.093 5.4-6.425z"/></svg> <span>Tersalin!</span>';
+                            button.classList.add("copied");
+                            setTimeout(()=>{
+                                button.innerHTML=originalHTML;
+                                button.classList.remove("copied");
+                            },2000);
+                        }).catch(err=>console.error("Gagal menyalin:",err));
+                    };
+                    
+                    const renderPaymentDetails=(method)=>{
+                        let detailsHTML="";
+                        
+                        if(method==="dana"||method==="gopay"){
+                            if(paymentData.nomor){
+                                const methodName=method.charAt(0).toUpperCase()+method.slice(1);
+                                detailsHTML=`<div class="account-info"><div class="details-header">Nomor ${methodName}</div><div class="account-number">${paymentData.nomor}</div><button class="copy-btn" id="copyBtn"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1z"/><path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0z"/></svg> <span>Salin Nomor</span></button></div>`;
+                                paymentDetailsContainer.innerHTML=detailsHTML;
+                                document.getElementById("copyBtn").addEventListener("click",()=>copyToClipboard(paymentData.nomor,document.getElementById("copyBtn")));
+                            }else{
+                                detailsHTML='<div class="account-info"><p style="color:var(--text-secondary-color);">Nomor tidak tersedia.</p></div>';
+                                paymentDetailsContainer.innerHTML=detailsHTML;
+                            }
+                        }else if(method==="qris"&&paymentData.qrisUrl){
+                            document.getElementById("qrisModal").style.display="flex";
+                        }
+                    };
+                    
+                    paymentBtns.forEach(btn=>{
+                        btn.addEventListener("click",()=>{
+                            paymentBtns.forEach(b=>b.classList.remove("active"));
+                            btn.classList.add("active");
+                            const method=btn.dataset.method;
+                            renderPaymentDetails(method);
+                        });
+                    });
+                    
+                    
+                    const qrisModal=document.getElementById("qrisModal"),
+                          closeQrisBtn=document.getElementById("closeQrisBtn");
+                    
+                    function closeQrisModal(){
+                        qrisModal.style.display="none";
+                    }
+                    
+                    closeQrisBtn.addEventListener("click",closeQrisModal);
+                    qrisModal.addEventListener("click",(e)=>{
+                        if(e.target===qrisModal) closeQrisModal();
+                    });
+                    
+                }));
+            </script></body></html>
